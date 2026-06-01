@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOMD MOVIES</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --red:#E50914;
+    --red-dark:#b30710;
+    --bg:#141414;
+    --surface:#1f1f1f;
+    --surface2:#2a2a2a;
+    --text:#fff;
+    --text-muted:#aaa;
+    --font-display:'Bebas Neue',sans-serif;
+    --font-body:'Barlow',sans-serif;
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+
+  /* ── NAVBAR ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 4%;height:68px;
+    background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);
+    transition:background .3s;
+  }
+  nav.scrolled{background:rgba(20,20,20,.97)}
+  .nav-logo{
+    font-family:var(--font-display);font-size:2.4rem;
+    color:var(--red);letter-spacing:2px;user-select:none;
+  }
+  .nav-links{display:flex;gap:1.4rem;font-size:.9rem;font-weight:500}
+  .nav-links a{color:var(--text-muted);transition:color .2s}
+  .nav-links a:hover,.nav-links a.active{color:#fff}
+  .nav-right{display:flex;align-items:center;gap:1.2rem}
+  .nav-search{background:none;border:none;color:#fff;cursor:pointer;font-size:1.1rem;padding:4px}
+  .nav-avatar{
+    width:34px;height:34px;border-radius:4px;
+    background:var(--red);display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:.85rem;cursor:pointer;
+  }
+
+  /* ── HERO ── */
+  .hero{
+    position:relative;height:90vh;min-height:520px;
+    background:linear-gradient(to right,rgba(0,0,0,.85) 30%,transparent 70%),
+               linear-gradient(to top,rgba(20,20,20,1) 0%,transparent 20%),
+               url('https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=1600&q=80') center/cover no-repeat;
+    display:flex;align-items:flex-end;padding:0 4% 7%;
+  }
+  .hero-content{max-width:520px}
+  .hero-badge{
+    display:inline-block;background:var(--red);
+    font-size:.7rem;font-weight:700;letter-spacing:3px;
+    padding:3px 10px;margin-bottom:1rem;text-transform:uppercase;
+  }
+  .hero-title{
+    font-family:var(--font-display);font-size:clamp(2.8rem,6vw,4.5rem);
+    line-height:1;letter-spacing:1px;margin-bottom:.8rem;
+  }
+  .hero-meta{display:flex;gap:1rem;font-size:.85rem;color:var(--text-muted);margin-bottom:.9rem;align-items:center}
+  .hero-meta .match{color:#46d369;font-weight:600}
+  .hero-meta .rating{border:1px solid var(--text-muted);padding:1px 7px;font-size:.75rem}
+  .hero-desc{font-size:1rem;line-height:1.6;color:#ddd;margin-bottom:1.6rem;max-width:420px}
+  .hero-btns{display:flex;gap:.9rem;flex-wrap:wrap}
+  .btn{
+    display:flex;align-items:center;gap:.5rem;
+    padding:.65rem 1.6rem;border-radius:4px;font-size:.95rem;font-weight:600;
+    cursor:pointer;border:none;transition:opacity .2s,transform .15s;
+  }
+  .btn:hover{opacity:.85;transform:scale(1.03)}
+  .btn-play{background:#fff;color:#000}
+  .btn-info{background:rgba(109,109,110,.7);color:#fff}
+  .btn svg{width:18px;height:18px}
+
+  /* ── SECTIONS ── */
+  .sections{padding:0 4% 4rem;margin-top:-3rem;position:relative;z-index:2}
+  .section{margin-bottom:2.5rem}
+  .section-title{
+    font-size:1.15rem;font-weight:600;margin-bottom:1rem;
+    display:flex;align-items:center;gap:.6rem;
+  }
+  .section-title span{color:var(--red);font-size:.85rem;cursor:pointer;font-weight:500;opacity:0}
+  .section:hover .section-title span{opacity:1;transition:opacity .25s}
+  .row{
+    display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;
+    scrollbar-width:none;
+  }
+  .row::-webkit-scrollbar{display:none}
+
+  /* ── CARD ── */
+  .card{
+    flex:0 0 auto;border-radius:4px;overflow:hidden;cursor:pointer;
+    position:relative;transition:transform .3s,z-index 0s .3s;
+  }
+  .card-sm{width:160px}
+  .card-md{width:200px}
+  .card-lg{width:240px}
+  .card:hover{transform:scale(1.08);z-index:10;transition:transform .3s,z-index 0s}
+  .card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:var(--surface2)}
+  .card-wide img{aspect-ratio:16/9}
+  .card-overlay{
+    position:absolute;bottom:0;left:0;right:0;
+    background:linear-gradient(transparent,rgba(0,0,0,.85));
+    padding:2rem .6rem .6rem;opacity:0;transition:opacity .25s;
+  }
+  .card:hover .card-overlay{opacity:1}
+  .card-overlay-title{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-overlay-meta{font-size:.7rem;color:var(--text-muted);margin-top:2px}
+  .card-rank{
+    position:absolute;bottom:-6px;left:-8px;
+    font-family:var(--font-display);font-size:5rem;line-height:1;
+    color:var(--bg);-webkit-text-stroke:2px #555;
+    pointer-events:none;user-select:none;
+  }
+  .card-new-badge{
+    position:absolute;top:8px;left:8px;
+    background:var(--red);font-size:.6rem;font-weight:700;
+    letter-spacing:1px;padding:2px 6px;border-radius:2px;
+  }
+
+  /* ── GENRES ROW ── */
+  .genre-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}
+  .genre-pill{
+    padding:.4rem 1.1rem;border-radius:20px;font-size:.82rem;font-weight:500;
+    border:1px solid var(--surface2);background:var(--surface);cursor:pointer;
+    transition:background .2s,border-color .2s;
+  }
+  .genre-pill:hover,.genre-pill.active{background:var(--red);border-color:var(--red);color:#fff}
+
+  /* ── FEATURED BANNER ── */
+  .feature-banner{
+    position:relative;border-radius:6px;overflow:hidden;margin-bottom:2.5rem;
+    height:280px;
+    background:linear-gradient(to right,rgba(0,0,0,.75) 40%,transparent),
+               url('https://images.unsplash.com/photo-1535016120720-40c646be5580?w=1200&q=80') center/cover no-repeat;
+    display:flex;align-items:center;padding:0 2.5rem;
+  }
+  .feature-banner h2{font-family:var(--font-display);font-size:2.5rem;max-width:360px;line-height:1.1}
+  .feature-banner p{font-size:.9rem;color:#ccc;max-width:300px;margin:.5rem 0 1.2rem}
+  .feature-banner .btn{padding:.5rem 1.3rem;font-size:.85rem}
+
+  /* ── FOOTER ── */
+  footer{
+    background:var(--bg);color:var(--text-muted);font-size:.8rem;
+    padding:2rem 4%;border-top:1px solid var(--surface2);
+  }
+  .footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:1.5rem}
+  .footer-logo{font-family:var(--font-display);font-size:1.6rem;color:var(--red)}
+  .footer-links{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;max-width:500px}
+  .footer-links a{color:var(--text-muted);transition:color .2s}
+  .footer-links a:hover{color:#fff}
+  .footer-bottom{font-size:.75rem;opacity:.6}
+
+  /* ── MODAL ── */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:all}
+  .modal{
+    background:#181818;border-radius:8px;width:min(800px,94vw);
+    max-height:90vh;overflow-y:auto;position:relative;
+    transform:translateY(30px);transition:transform .3s;
+  }
+  .modal-overlay.open .modal{transform:translateY(0)}
+  .modal-hero{
+    height:380px;
+    background:linear-gradient(to top,#181818 5%,transparent 50%),
+               url('https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=900&q=80') center/cover no-repeat;
+    position:relative;border-radius:8px 8px 0 0;
+  }
+  .modal-close{
+    position:absolute;top:14px;right:14px;
+    width:32px;height:32px;border-radius:50%;
+    background:rgba(0,0,0,.6);border:none;color:#fff;
+    font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    z-index:10;
+  }
+  .modal-content{padding:0 2rem 2rem}
+  .modal-title{font-family:var(--font-display);font-size:2rem;margin-bottom:.5rem}
+  .modal-meta{display:flex;gap:1rem;font-size:.85rem;margin-bottom:1rem;align-items:center;flex-wrap:wrap}
+  .modal-match{color:#46d369;font-weight:600}
+  .modal-rating{border:1px solid var(--text-muted);padding:1px 7px;font-size:.75rem}
+  .modal-desc{font-size:.9rem;line-height:1.65;color:#ccc;margin-bottom:1.5rem}
+  .modal-cast{font-size:.85rem;color:var(--text-muted)}
+  .modal-cast strong{color:#fff}
+  .modal-btns{display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap}
+  .btn-sm{padding:.5rem 1.2rem;font-size:.85rem}
+
+  /* ── SEARCH ── */
+  .search-bar{
+    display:none;position:fixed;top:0;left:0;right:0;z-index:150;
+    background:rgba(20,20,20,.98);padding:1rem 4%;
+    align-items:center;gap:1rem;
+  }
+  .search-bar.open{display:flex}
+  .search-bar input{
+    flex:1;background:var(--surface);border:none;color:#fff;
+    font-size:1rem;padding:.6rem 1rem;border-radius:4px;outline:none;
+    font-family:var(--font-body);
+  }
+  .search-bar button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:4px 8px}
+  .search-results{display:none;flex-wrap:wrap;gap:8px;padding:1rem 4% 1.5rem;margin-top:68px;position:fixed;left:0;right:0;z-index:140;background:rgba(20,20,20,.98)}
+  .search-results.open{display:flex}
+
+  /* ── SCROLL TO TOP ── */
+  .scroll-top{
+    position:fixed;bottom:2rem;right:2rem;
+    width:40px;height:40px;border-radius:50%;
+    background:var(--red);border:none;color:#fff;
+    font-size:1.2rem;cursor:pointer;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+    display:flex;align-items:center;justify-content:center;z-index:90;
+  }
+  .scroll-top.visible{opacity:1;pointer-events:all}
+
+  @media(max-width:640px){
+    .nav-links{display:none}
+    .hero{height:70vh;padding-bottom:5%}
+    .hero-title{font-size:2.4rem}
+    .card-sm{width:130px}.card-md{width:160px}.card-lg{width:200px}
+    .feature-banner{height:200px}
+    .feature-banner h2{font-size:1.8rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">SOMD MOVIES</div>
+  <div class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#">TV Shows</a>
+    <a href="#">Movies</a>
+    <a href="#">New &amp; Popular</a>
+    <a href="#">My List</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-search" onclick="toggleSearch()" aria-label="Search">&#128269;</button>
+    <div class="nav-avatar">SM</div>
+  </div>
+</nav>
+
+<!-- SEARCH BAR -->
+<div class="search-bar" id="searchBar">
+  <input type="text" id="searchInput" placeholder="Search movies, shows, genres…" oninput="handleSearch(this.value)" autocomplete="off"/>
+  <button onclick="toggleSearch()">✕ Close</button>
+</div>
+<div class="search-results" id="searchResults"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">⚡ Featured Today</div>
+    <h1 class="hero-title">Dune: Part Two</h1>
+    <div class="hero-meta">
+      <span class="match">98% Match</span>
+      <span>2024</span>
+      <span class="rating">PG-13</span>
+      <span>2h 46m</span>
+    </div>
+    <p class="hero-desc">Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.</p>
+    <div class="hero-btns">
+      <button class="btn btn-play" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Play
+      </button>
+      <button class="btn btn-info" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        More Info
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT SECTIONS -->
+<main class="sections">
+
+  <!-- Genre pills -->
+  <div class="genre-row" id="genreRow">
+    <div class="genre-pill active" onclick="filterGenre(this,'All')">All</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Action')">Action</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Drama')">Drama</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Sci-Fi')">Sci-Fi</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Comedy')">Comedy</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Horror')">Horror</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Thriller')">Thriller</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Animation')">Animation</div>
+    <div class="genre-pill" onclick="filterGenre(this,'Romance')">Romance</div>
+  </div>
+
+  <!-- Top 10 -->
+  <div class="section">
+    <div class="section-title">🔥 Top 10 in Your Region <span>See All ›</span></div>
+    <div class="row" id="top10Row"></div>
+  </div>
+
+  <!-- Continue Watching -->
+  <div class="section">
+    <div class="section-title">▶ Continue Watching <span>See All ›</span></div>
+    <div class="row" id="continueRow"></div>
+  </div>
+
+  <!-- Feature Banner -->
+  <div class="feature-banner">
+    <div>
+      <h2>New Arrivals This Month</h2>
+      <p>Fresh blockbusters and hidden gems added weekly.</p>
+      <button class="btn btn-play btn-sm" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><polygon points="5,3 19,12 5,21"/></svg>
+        Watch Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Trending Now -->
+  <div class="section">
+    <div class="section-title">📈 Trending Now <span>See All ›</span></div>
+    <div class="row" id="trendingRow"></div>
+  </div>
+
+  <!-- Award Winners -->
+  <div class="section">
+    <div class="section-title">🏆 Award Winners <span>See All ›</span></div>
+    <div class="row" id="awardsRow"></div>
+  </div>
+
+  <!-- Recently Added -->
+  <div class="section">
+    <div class="section-title">✨ Recently Added <span>See All ›</span></div>
+    <div class="row" id="recentRow"></div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">SOMD MOVIES</div>
+      <p style="margin-top:.4rem;font-size:.75rem">Your ultimate streaming destination.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#">FAQ</a><a href="#">Help Center</a><a href="#">Account</a>
+      <a href="#">Media Center</a><a href="#">Investor Relations</a><a href="#">Jobs</a>
+      <a href="#">Redeem Gift Cards</a><a href="#">Buy Gift Cards</a>
+      <a href="#">Ways to Watch</a><a href="#">Terms of Use</a>
+      <a href="#">Privacy</a><a href="#">Cookie Preferences</a>
+      <a href="#">Corporate Information</a><a href="#">Contact Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2024 SOMD MOVIES. All rights reserved.</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-hero">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-content">
+      <div class="modal-btns">
+        <button class="btn btn-play btn-sm">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><polygon points="5,3 19,12 5,21"/></svg>
+          Play
+        </button>
+        <button class="btn btn-info btn-sm">+ My List</button>
+        <button class="btn btn-info btn-sm">👍</button>
+        <button class="btn btn-info btn-sm">👎</button>
+      </div>
+      <h2 class="modal-title">Dune: Part Two</h2>
+      <div class="modal-meta">
+        <span class="modal-match">98% Match</span>
+        <span>2024</span>
+        <span class="modal-rating">PG-13</span>
+        <span>2h 46m</span>
+        <span style="border:1px solid #555;padding:1px 6px;font-size:.73rem">HD</span>
+      </div>
+      <p class="modal-desc">Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe, he endeavors to prevent a terrible future only he can foresee.</p>
+      <p class="modal-cast"><strong>Cast:</strong> Timothée Chalamet, Zendaya, Rebecca Ferguson, Josh Brolin, Austin Butler</p>
+      <p class="modal-cast" style="margin-top:.3rem"><strong>Genres:</strong> Sci-Fi · Action · Drama</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const movies = [
+  {id:1,title:"Dune: Part Two",year:2024,genre:"Sci-Fi",match:98,img:"https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=400&q=70"},
+  {id:2,title:"Oppenheimer",year:2023,genre:"Drama",match:96,img:"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=70"},
+  {id:3,title:"The Batman",year:2022,genre:"Action",match:94,img:"https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&q=70"},
+  {id:4,title:"Interstellar",year:2014,genre:"Sci-Fi",match:99,img:"https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&q=70"},
+  {id:5,title:"Parasite",year:2019,genre:"Thriller",match:97,img:"https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=70"},
+  {id:6,title:"Past Lives",year:2023,genre:"Romance",match:95,img:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=70"},
+  {id:7,title:"Hereditary",year:2018,genre:"Horror",match:91,img:"https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?w=400&q=70"},
+  {id:8,title:"Everything Everywhere",year:2022,genre:"Action",match:97,img:"https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=400&q=70"},
+  {id:9,title:"The Power of Dog",year:2021,genre:"Drama",match:93,img:"https://images.unsplash.com/photo-1543536448-1e76fc2795bf?w=400&q=70"},
+  {id:10,title:"Spider-Man: NWH",year:2021,genre:"Action",match:96,img:"https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&q=70"},
+  {id:11,title:"Tár",year:2022,genre:"Drama",match:92,img:"https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400&q=70"},
+  {id:12,title:"Midsommar",year:2019,genre:"Horror",match:88,img:"https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&q=70"},
+  {id:13,title:"The Holdovers",year:2023,genre:"Comedy",match:94,img:"https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=70"},
+  {id:14,title:"Aftersun",year:2022,genre:"Drama",match:93,img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=70"},
+  {id:15,title:"Alien: Romulus",year:2024,genre:"Sci-Fi",match:90,img:"https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=400&q=70"},
+  {id:16,title:"Challengers",year:2024,genre:"Romance",match:89,img:"https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&q=70"},
+  {id:17,title:"The Fall Guy",year:2024,genre:"Action",match:87,img:"https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&q=70"},
+  {id:18,title:"Inside Out 2",year:2024,genre:"Animation",match:95,img:"https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&q=70"},
+  {id:19,title:"Poor Things",year:2023,genre:"Comedy",match:94,img:"https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&q=70"},
+  {id:20,title:"Civil War",year:2024,genre:"Thriller",match:88,img:"https://images.unsplash.com/photo-1525498128493-380d1990a112?w=400&q=70"},
+];
+
+function makeCard(m,size='md',showRank=false,rank=0){
+  const c=document.createElement('div');
+  c.className=`card card-${size}`;
+  c.dataset.genre=m.genre;
+  const rankHTML=showRank?`<div class="card-rank">${rank}</div>`:'';
+  const badgeHTML=m.year>=2024?`<div class="card-new-badge">NEW</div>`:'';
+  c.innerHTML=`
+    <img src="${m.img}" alt="${m.title}" loading="lazy"/>
+    ${rankHTML}${badgeHTML}
+    <div class="card-overlay">
+      <div class="card-overlay-title">${m.title}</div>
+      <div class="card-overlay-meta">${m.year} · ${m.match}% Match</div>
+    </div>`;
+  c.onclick=()=>openModal(m);
+  return c;
+}
+
+function fillRow(id,list,size,showRank=false){
+  const row=document.getElementById(id);
+  row.innerHTML='';
+  list.forEach((m,i)=>row.appendChild(makeCard(m,size,showRank,i+1)));
+}
+
+fillRow('top10Row',movies.slice(0,10),'md',true);
+fillRow('continueRow',[movies[0],movies[2],movies[4],movies[7],movies[9]],'lg');
+fillRow('trendingRow',movies.slice(5,15),'md');
+fillRow('awardsRow',[movies[1],movies[4],movies[8],movies[10],movies[18],movies[3]],'md');
+fillRow('recentRow',movies.filter(m=>m.year>=2024),'md');
+
+// Genre filter
+function filterGenre(el,genre){
+  document.querySelectorAll('.genre-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const filtered=genre==='All'?movies:movies.filter(m=>m.genre===genre);
+  fillRow('trendingRow',filtered.slice(0,Math.min(filtered.length,12)),'md');
+}
+
+// Modal
+function openModal(m){
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+  document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400);
+});
+
+// Search
+function toggleSearch(){
+  const bar=document.getElementById('searchBar');
+  const res=document.getElementById('searchResults');
+  const open=bar.classList.toggle('open');
+  if(open){document.getElementById('searchInput').focus();}
+  else{res.classList.remove('open');res.innerHTML='';}
+}
+function handleSearch(q){
+  const res=document.getElementById('searchResults');
+  if(!q.trim()){res.classList.remove('open');res.innerHTML='';return;}
+  const found=movies.filter(m=>m.title.toLowerCase().includes(q.toLowerCase())||m.genre.toLowerCase().includes(q.toLowerCase()));
+  res.innerHTML='';
+  if(found.length){
+    found.forEach(m=>res.appendChild(makeCard(m,'sm')));
+    res.classList.add('open');
+  } else {
+    res.innerHTML='<p style="color:#aaa;padding:.5rem 0">No results found.</p>';
+    res.classList.add('open');
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();if(document.getElementById('searchBar').classList.contains('open'))toggleSearch();}});
+</script>
+</body>
+</html>
